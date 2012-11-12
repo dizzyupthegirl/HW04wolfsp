@@ -39,11 +39,13 @@ void HW04wolfspApp::prepareSettings(Settings* settings)
 
 void HW04wolfspApp::setup()
 {
+	cout << "Test" << endl;
 	//Attemps to test, but won't print ro console for some dumb reason. 
 	mySurface_ = new Surface(surfaceSize, surfaceSize, false);
 	starbucks_ = new StarbucksWolf();
 	Entry* cur_entry = starbucks_->getNearest(0.0, 0.0);
-	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
+	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y << std::endl;
+	/*
 	cur_entry = starbucks_->getNearest(0.1, 0.1);
 	console() << "Starbucks:" << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
 	cur_entry = starbucks_->getNearest(0.2, 0.2);
@@ -54,6 +56,7 @@ void HW04wolfspApp::setup()
 	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
 	cur_entry = starbucks_->getNearest(0.5, 0.5);
 	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
+	*/
 	
 }
 

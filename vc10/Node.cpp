@@ -9,9 +9,10 @@ Node::Node(Entry* e) {
 
 
 Entry* Node::search(Entry* key, Node* current, bool isXlevel) {
-	Entry* closest;
-	if(current == NULL)
+	if(current == NULL || current->key == NULL)
 		return NULL;
+
+	Entry* closest;
 
 	if((key->x == current->key->x)&&( key->y == current->key->y)) {
 		lastNode = current;

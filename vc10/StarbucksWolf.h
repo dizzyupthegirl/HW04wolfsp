@@ -11,6 +11,6 @@ public:
 	~StarbucksWolf(void);
 
 	Node* root;
-	void build(Entry* c, int n);
-	Entry* getNearest(double x, double y);
+	virtual void build(Entry* c, int n);
+	virtual Entry* getNearest(double x, double y);
 };
