@@ -1,138 +1,64 @@
-/**
-* @file Node.cpp
-* CSE 274 - Fall 2012
-*
-* @author Matthew Dwyer
-* @date 10/29/2012
-*
-* @note This file is (c) 2012. It is licensed under the
-* CC BY 3.0 license (http://creativecommons.org/licenses/by/3.0/),
-* which means you are free to use, share, and remix it as long as you
-* give attribution. Commercial uses are allowed.
-*
-*/
-
 #include "Node.h"
 
-Node::Node(Entry* e)
-{
+Node::Node(Entry* e) {
 	key = e;
 	left = NULL;
 	right = NULL;
 }
 
 
-Node* Node::insert(Entry* e, Node* r, bool isXlevel)
-{
-	if(r == NULL)
-		return new Node(e);
-	if(r->key == e)
-		return r;
-	if(isXlevel)
-	{
-		if(e->x <= r->key->x)
-		{
-			if(r->left != NULL)
-				r->left = insert(e, r->left, !isXlevel);
-			else
-				r->left = new Node(e);
-		}
-		else if(e->x > r->key->x)
-		{
-			if(r->right != NULL)
-				r->right = insert(e, r->right, !isXlevel);
-			else
-				r->right = new Node(e);
-		}
-	}
-	else
-	{
-		if(e->y <= r->key->y)
-		{
-			if(r->left != NULL)
-				r->left = insert(e, r->left, !isXlevel);
-			else
-				r->left = new Node(e);
-		}
-		else if(e->y > r->key->y)
-		{
-			if(r->right != NULL)
-				r->right = insert(e, r->right, !isXlevel);
-			else
-				r->right = new Node(e);
-		}
-	}
 
-	return r;
-}
-
-Entry* Node::search(Entry* key, Node* r, bool isXlevel)
-{
+Entry* Node::search(Entry* key, Node* current, bool isXlevel) {
 	Entry* closest;
-	if(r == NULL)
+	if(current == NULL)
 		return NULL;
 
-	if(key->x == r->key->x && key->y == r->key->y)
-	{
-		finalEntry = r;
-		return r->key;
+	if((key->x == current->key->x)&&( key->y == current->key->y)) {
+		lastNode = current;
+		return current->key;
 	}
 
-	if(isXlevel)
-	{
-		if(key->x <= r->key->x)
-		{
-			if(r->left == NULL) // If there is no left node, the current node is the closest location
-			{
-				closest = r->key;
-				finalEntry = r;
+	if(isXlevel) {
+		if(key->x <= current->key->x) {
+			if(current->left == NULL) {
+				closest = current->key;
+				lastNode = current;
 			}
-			else
-			{
-				parent = r;
-				closest = search(key, r->left, !isXlevel);
+			else {
+				parent = current;
+				closest = search(key, current->left, !isXlevel);
 			}
 		}
-		else
-		{
-			if(r->right == NULL)
-			{
-				closest = r->key;
-				finalEntry = r;
+		else {
+			if(current->right == NULL) {
+				closest = current->key;
+				lastNode = current;
 			}
-			else
-			{
-				parent = r;
-				closest = search(key, r->right, !isXlevel);
+			else {
+				parent = current;
+				closest = search(key, current->right, !isXlevel);
 			}
 		}
 	}
-	else
-	{
-		if(key->y <= r->key->y)
-		{
-			if(r->left == NULL)
-			{
-				closest = r->key;
-				finalEntry = r;
+	else {
+		if(key->y <= current->key->y) {
+			if(current->left == NULL) {
+				closest = current->key;
+				lastNode = current;
 			}
-			else
-			{
-				parent = r;
-				closest = search(key, r->left, !isXlevel);
+			else {
+				parent = current;
+				closest = search(key, current->left, !isXlevel);
 			}
 		}
-		else
-		{
-			if(r->right == NULL)
-			{
-				closest = r->key;
-				finalEntry = r;
+		else {
+			if(current->right == NULL) {
+				closest = current->key;
+				lastNode = current;
 			}
-			else
-			{
-				parent = r;
-				closest= search(key, r->right, !isXlevel);
+			else {
+				parent = current;
+				closest= search(key, current->right, !isXlevel);
 			}
 		}
 	}
@@ -140,67 +66,83 @@ Entry* Node::search(Entry* key, Node* r, bool isXlevel)
 	return closest;
 }
 
-Node* Node::next(Node* r, bool firstTime)
-{
+
+Node* Node::insert(Entry* e, Node* current, bool isXlevel) {
+	if(current == NULL)
+		return new Node(e);
+	if(current->key == e)
+		return current;
+	if(isXlevel) {
+		if(e->x <= current->key->x) {
+			if(current->left != NULL)
+				current->left = insert(e, current->left, !isXlevel);
+			else
+				current->left = new Node(e);
+		}
+		else if(e->x > current->key->x) {
+			if(current->right != NULL)
+				current->right = insert(e, current->right, !isXlevel);
+			else
+				current->right = new Node(e);
+		}
+	}
+	else {
+		if(e->y <= current->key->y) {
+			if(current->left != NULL)
+				current->left = insert(e, current->left, !isXlevel);
+			else
+				current->left = new Node(e);
+		}
+		else if(e->y > current->key->y) {
+			if(current->right != NULL)
+				current->right = insert(e, current->right, !isXlevel);
+			else
+				current->right = new Node(e);
+		}
+	}
+
+	return current;
+}
+
+
+Node* Node::next(Node* current, bool firstTime) {
 	Node* next_node;
 
-	if(r->right == NULL && r->left != NULL)
-		return parent;
-	// This decreases accuracy, however, I ran out of time to implement
-	// a good work around.  This is a quick fix that allows problems to
-	// be bypassed.
-	if(r->right == NULL && r->left == NULL)
+	if(current->right == NULL && current->left != NULL)
 		return parent;
 
-	if(r->right->left != NULL && firstTime)
-		next_node = next(r->right, false);
-	else if(r->left != NULL)
-		next_node = next(r->left, false);
+	if(current->right == NULL && current->left == NULL)
+		return current;
+
+	if(current->right->left != NULL && firstTime)
+		next_node = next(current->right, false);
+	else if(current->left != NULL)
+		next_node = next(current->left, false);
 	else
-		next_node = r->right;
+		next_node = current->right;
 
 	return next_node;
 
-	// Original method, which did not work well at all
-	/*if(r == NULL)
-		return NULL;
-	else if(key > r->key)
-		return next(key, r->right);
-	else
-	{
-		Node* temp = next(key, r->left);
-		if(temp == NULL)
-			return r;
-		else
-			return temp;
-	}*/
 }
 
-Node* Node::previous(Node* r, bool firstTime)
-{
+Node* Node::previous(Node* current, bool firstTime) {
 	Node* prev_node;
 
-	if(r->left == NULL && r->right != NULL)
+	if(current->left == NULL && current->right != NULL)
 		return parent;
-	// This decreases accuracy, however, I ran out of time to implement
-	// a good work around.  This is a quick fix that allows problems to
-	// be bypassed.
-	if(r->left == NULL && r->right == NULL)
-		return parent;
+	if(current->left == NULL && current->right == NULL)
+		return current;
 
-	if(r->left->right != NULL && firstTime)
-		prev_node = next(r->left, false);
-	else if(r->right != NULL)
-		prev_node = next(r->right, false);
+	if(current->left->right != NULL && firstTime)
+		prev_node = next(current->left, false);
+	else if(current->right != NULL)
+		prev_node = next(current->right, false);
 	else
-		prev_node = r->left;
+		prev_node = current->left;
 
-	return prev_node;
-
-	
+	return prev_node;	
 }
 
-Node* Node::getFinalEntry()
-{
-	return finalEntry;
+Node* Node::getlastNode() {
+	return lastNode;
 }

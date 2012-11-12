@@ -1,7 +1,7 @@
-#include "StarbucksWolf.h"
-#include "Node.h"
 #include "cinder/app/AppBasic.h"
 #include "cinder/gl/gl.h"
+#include "StarbucksWolf.h"
+#include "Node.h"
 #include <fstream>
 #include <iostream>
 
@@ -9,128 +9,99 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-StarbucksWolf::StarbucksWolf()
-{
+StarbucksWolf::StarbucksWolf() {
 	ifstream in("Starbucks_2006.csv");
-	vector <Entry> storage;
-
+	vector <Entry> stored_v;
 	string line;
-	double d;
-	double d2;
+	double i_;
+	double j_;
 	char separator;
 	int x = 0;
 
-	// Reads in all values from the .csv file
-	while(in.good())
-	{
+	//I was so lost on this part, I'm still not sure exactly how this reads in the code...
+	while(in.good()) {
 		Entry* e = new Entry();
-		storage.push_back(*e);
+		stored_v.push_back(*e);
 		getline(in, line, ',');
 
-		storage[x].identifier = line;
-		in >> d;
-		storage[x].x = d;
-		in >> separator; // Gets the separator
-		in >> d2;
-		storage[x].y = d2;
+		stored_v[x].identifier = line;
+		in >> i_;
+		stored_v[x].x = i_;
+		in >> separator;//Sam, this is a comma....
+		in >> j_;
+		stored_v[x].y = j_;
 		x++;
 		console() << line;
 	}
 
-	Entry* locs = new Entry[storage.size()];
+	Entry* stored_a = new Entry[stored_v.size()];
 
-	// Copies all values from the vector to the array
-	for(int y = 0; y < storage.size(); y++)
-		locs[y] = storage[y];
-
-	// Builds the binary tree
-	build(locs, storage.size());
+	for(int i = 0; i < stored_v.size(); i++)
+		stored_a[i] = stored_v[i];
+	build(stored_a, stored_v.size());
 }
 
 
-void StarbucksWolf::build(Entry* c, int n)
-{
-	vector<Entry> storage;
+void StarbucksWolf::build(Entry* c, int n) {
+	vector<Entry> stored_v;
 
-	// Convert from array back to vector.  This step seems useless,
-	// but it is much easier to remove duplicates while the data is in
-	// vector form.
-	for(int x = 0; x < n; x++)
-		storage.push_back(c[x]); // Adds the element to the end of the vector
+	for(int i = 0; i < n; i++)
+		stored_v.push_back(c[i]); 
 
-	// Check for duplicate locations.  A duplicate location is defined as
-	// both the x and y values of the compared locations being within
-	// 0.00001 of one another
-	for(int a = 0; a < storage.size(); a++)
-	{
-		for(int b = a + 1; b < storage.size(); b++)
-		{
-			if(abs(storage[a].x - storage[b].x) <= 0.00001)
-			{
-				if(abs(storage[a].y - storage[b].y) <= 0.00001)
-					storage.erase(storage.begin() + a);
+	// Check for duplicates as defined in class
+	for(int j = 0; j < stored_v.size(); j++) {
+		for(int k = j + 1; k < stored_v.size(); k++) {
+			if(abs(stored_v[j].x - stored_v[k].x) <= 0.00001) {
+				if(abs(stored_v[j].y - stored_v[k].y) <= 0.00001)
+					stored_v.erase(stored_v.begin() + j);
 			}
 		}
 	}
 
-	// Shuffles vector to make it random
-	std::random_shuffle(storage.begin(), storage.end());
+	// Shuffle, side note: I didn't know till this project that c++ has a shuffler...
+	// This makes me very happy...
+	std::random_shuffle(stored_v.begin(), stored_v.end());
 
-	Entry* locs = new Entry[storage.size()];
-
-	// Copies all values from the vector to the array
-	for(int y = 0; y < storage.size(); y++)
-		locs[y] = storage[y];
-
+	Entry* stored_a = new Entry[stored_v.size()];
+	for(int y = 0; y < stored_v.size(); y++)
+		stored_a[y] = stored_v[y];
 	Node* r = NULL;
-
-	// Building the K-D tree
-	for(int p = 0; p < storage.size(); p++)
-	{
-		// First time through, gets the root node.  Then builds off that
-		if(p == 0)
-		{
-			r = r->insert(&locs[p], r, true);
+	for(int i = 0; i < stored_v.size(); i++){
+	
+		if(i == 0) {
+			r = r->insert(&stored_a[i], r, true);
 			root = r; // root now points to the root node of the k-d tree
 		}
 		else
-			r->insert(&locs[p], r, true);
+			r->insert(&stored_a[i], r, true);
 	}
 
 }
 
-Entry* StarbucksWolf::getNearest(double x, double y)
-{
+Entry* StarbucksWolf::getNearest(double x, double y) {
 	Entry* base = new Entry();
 	base->x = x;
 	base->y = y;
 
 	Entry* e = root->search(base, root, true);
-	Node* finalEntry = root->getFinalEntry();
+	Node* lastNode = root->getlastNode();
 
-	// Find the two closest nodes to the node found
-	// Can sometimes lead to spotty results, but catches
-	// the closer location sometimes.  For accuracy purposes,
-	// I feel it's ok to leave these here.  I do not believe it
-	// affects runtime in a drastic way.  Can also be removed
-	// with little loss of accuracy (comparatively)
-	Node* node_prev = root->previous(finalEntry, true);
-	Node* node_next = root->next(finalEntry, true);
+	Node* node_prev = root->previous(lastNode, true);
+	Node* node_next = root->next(lastNode, true);
 
 	Entry* e_prev = node_prev->key;
 	Entry* e_next = node_next->key;
 
-	double dist1 = sqrt(pow(x - e->x, 2) + pow(y - e->y, 2));
-	double dist2 = sqrt(pow(x - e_prev->x, 2) + pow(y - e_prev->y, 2));
-	double dist3 = sqrt(pow(x - e_next->x, 2) + pow(y - e_next->y, 2));
+	double d1 = sqrt(pow(x - e->x, 2) + pow(y - e->y, 2));
+	double d2 = sqrt(pow(x - e_prev->x, 2) + pow(y - e_prev->y, 2));
+	double d3 = sqrt(pow(x - e_next->x, 2) + pow(y - e_next->y, 2));
 
-	// Finds the shortest of the three distances and returns them
-	double min_dist = min(dist1, dist2);
-	min_dist = min(min_dist, dist3);
+	double min_ = min(d1, min(d2, d3));
 
-	if(min_dist == dist1)
+
+	if(min_ == d1)
 		return e;
-	else if(min_dist == dist2)
+	else if(min_ == d2)
 		return e_prev;
 	else
 		return e_next;
