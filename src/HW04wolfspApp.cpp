@@ -43,17 +43,17 @@ void HW04wolfspApp::setup()
 	mySurface_ = new Surface(surfaceSize, surfaceSize, false);
 	starbucks_ = new StarbucksWolf();
 	Entry* cur_entry = starbucks_->getNearest(0.0, 0.0);
-	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
+	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y << std::endl;
 	cur_entry = starbucks_->getNearest(0.1, 0.1);
-	console() << "Starbucks:" << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
+	console() << "Starbucks:" << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y<< std::endl;
 	cur_entry = starbucks_->getNearest(0.2, 0.2);
-	console() << "Starbucks:" << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
+	console() << "Starbucks:" << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y<< std::endl;
 	cur_entry = starbucks_->getNearest(0.3, 0.3);
-	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
+	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y<< std::endl;
 	cur_entry = starbucks_->getNearest(0.4, 0.4);
-	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
+	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y<< std::endl;
 	cur_entry = starbucks_->getNearest(0.5, 0.5);
-	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y;
+	console() << "Starbucks: " << cur_entry->identifier << ", X = " << cur_entry->x << ", Y = " << cur_entry->y<< std::endl;
 	
 }
 

@@ -10,7 +10,7 @@ using namespace ci::app;
 using namespace std;
 
 StarbucksWolf::StarbucksWolf() {
-	ifstream in("Starbucks_2006.csv");
+	ifstream in("../../../Resources/Starbucks_2006.csv");
 	vector <Entry> stored_v;
 	string line;
 	double i_;
@@ -31,7 +31,6 @@ StarbucksWolf::StarbucksWolf() {
 		in >> j_;
 		stored_v[x].y = j_;
 		x++;
-		console() << line;
 	}
 
 	Entry* stored_a = new Entry[stored_v.size()];
