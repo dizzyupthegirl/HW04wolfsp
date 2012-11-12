@@ -105,6 +105,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\src\HW04wolfspApp.cpp" />
+    <ClCompile Include="Node.cpp" />
     <ClCompile Include="StarbucksWolf.cpp" />
   </ItemGroup>
   <ItemGroup>
